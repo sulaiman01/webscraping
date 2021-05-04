@@ -3,6 +3,7 @@ import urllib
 import urllib.request
 import requests
 import csv
+import argparse
 
 
 def innerHTML(element):
@@ -90,19 +91,25 @@ def get_location(body):
 page_number = 1
 service_count = 1
 
+parser = argparse.ArgumentParser(description='PyTorch Unsupervised Segmentation')
+parser.add_argument('--url', metavar='URL',
+                    help='input the url', required=True)
+parser.add_argument('--output', metavar='OUTPUT',
+                    help='input csv saving address')
+args = parser.parse_args()
 
 fields = ['Name', 'Phone', 'Rating', 'Rating Count', 'Address', 'Location']
-out_file = open('hardware.csv','w')
+out_file = open(args.output,'w')
 csvwriter = csv.DictWriter(out_file, delimiter=',', fieldnames=fields)
 
 # Write fields first
 #csvwriter.writerow(dict((fn,fn) for fn in fields))
 while True:
 	# Check if reached end of result
-	if page_number > 50:
+	if page_number > 2:
 		break
-
-	url="https://www.justdial.com/Rajkot/Hardware-Shops-in-Rajkot/nct-10243514/page-%s" % (page_number)
+	page_str = '/page-'
+	url= args.url + page_str + str(page_number)
 	print(url)
 	req = urllib.request.Request(url, headers={'User-Agent' : "Mozilla/5.0 (Windows NT 6.1; Win64; x64)"}) 
 	page = urllib.request.urlopen( req )
